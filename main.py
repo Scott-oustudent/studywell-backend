@@ -1,21 +1,23 @@
 import os
-import mysql.connector
+import psycopg2
 from flask import Flask, jsonify
+import logging
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.INFO)
 
 # Function to get a database connection
 def get_db_connection():
     try:
-        conn = mysql.connector.connect(
+        conn = psycopg2.connect(
             host=os.environ.get("DB_HOST"),
             user=os.environ.get("DB_USER"),
             password=os.environ.get("DB_PASSWORD"),
-            database=os.environ.get("DB_NAME")
+            dbname=os.environ.get("DB_NAME")
         )
         return conn
-    except mysql.connector.Error as e:
-        print(f"Error connecting to MySQL: {e}")
+    except psycopg2.Error as e:
+        logging.exception("Error connecting to PostgreSQL:")
         return None
 
 @app.route("/")
